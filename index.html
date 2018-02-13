@@ -3,55 +3,124 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Guessing Game</title>
+    <title>Bob's Burgers RPG</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./assets/css/reset.css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" media="screen" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
+
 <body>
-    <div class="row">
-        <div class="col-md-3"></div>
-            <div class="col-md-5">
-                <h3 id="pickedNum"></h3>
-            </div>
-        <div class="col-md-4"></div>
-    </div>
-
+<div class="container">
+    <div id ="characters"class="row"></div>
     <br>
     <br>
-    
-    <div class="row">
-        <div class="col-md-5"></div>
-            <div class="col-md-1">
-                <h3 id="guessedNum"></h3>
-            </div>
-        <div class="col-md-6"></div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-2">
-            <div id="wins"></div>
-            <div id="losses"></div>
+    <div id="gameplay"class="row">
+        <div id="myHero" class= "col-md-4"></div>
+        <div id = "battleground" class="col-md-4">
+            <button id="attackButton" type="button" class="btn btn-warning">Attack!</button>
         </div>
-            <div class="col-md-8">
-                <div id="food"></div>
-            </div>
-        <div class="col-md-2"></div>
+        <div id="myEnemy" class="col-md-4"></div>
     </div>
-    
-    <br>
-
-    <div class="row">
-        <div class="col-md-2"></div>
-            <div class="col-md-5">
-                <div id="gif"></div>
-            </div>
-            <div id="message" class="col-md-3"></div>
-        <div class="col-md-2"></div>
-    </div>
-
+</div>
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
-   
-<script src="./assets/javascript/game.js"></script>
+
+
+<script>
+$(document).ready(function(){
+
+// name, hp, strength, image 
+var chosenHero
+var chosenEnemy
+var isHeroChosen
+var isEnemyChosen
+var isHeroAlive
+var isEnemyAlive
+var button = $("button")
+
+function initGame(){
+    isHeroChosen = false;
+    isEnemyChosen = false;
+    // generate characters
+    for (var i=0; i<characterArr.length; i++){
+        var num = Math.floor(12 / characterArr.length)
+        var charThing = $("<div class='myChar col-md-"+num+"' value ='"+i+"'><img src='"+characterArr[i].image+"'style='width:250px;height:150px;'/></div>")
+        $("#characters").append(charThing)
+    }
+}
+$(document).on("click",".myChar", function(){
+    if (isHeroChosen===false){
+        chosenHero = characterArr[$(this).attr("value")]
+        console.log(chosenHero)
+        isHeroChosen=true
+        $(this).addClass("fader")
+        myHeroSelect = $("<div id = '"+chosenHero.name+"'><img src='"+chosenHero.image+"'style='height:275px;width:350px;'/><p>"+chosenHero.name+"</p><h5>HP</h5><p id='heroHP'>"+chosenHero.hp+"</p></div>")
+        $("#myHero").html(myHeroSelect)
+        $("#myHero").css({"background-color":"#00a478", "padding-top": "10px","color":"white"})
+    }
+    else if(isEnemyChosen===false && chosenHero.name!=characterArr[$(this).attr("value")].name){
+        chosenEnemy = characterArr[$(this).attr("value")]
+        console.log(chosenEnemy)
+        isEnemyChosen=true
+        $(this).addClass("fader")
+        myEnemySelect = $("<div id = '"+chosenEnemy.name+"'><img src='"+chosenEnemy.image+"'style='height:275px;width:350px;'/><p>"+chosenEnemy.name+"</p><h5>HP</h5><p id='enemyHP'>"+chosenHero.hp+"</p></div>")
+        $("#myEnemy").html(myEnemySelect)
+        $("#myEnemy").css({"background-color":"#00a478", "padding-top":"10px", "color":"white"})
+    }
+})
+$("#attackButton").on("click", function(){
+    var attackPoints1 = Math.floor(Math.random()*20)
+    var attackPoints2 = Math.floor(Math.random()*20)
+    
+    chosenHero.hp -= attackPoints1
+    $("#heroHP").text(chosenEnemy.hp)
+    $("#battleground").append("<p>" +chosenEnemy.name +" attacked "+ chosenHero.name + " for " + attackPoints1 +" hit points!</p>")
+    $("#battleground").css({"background-color":"#00a478","color":"white"})
+    
+    
+    chosenEnemy.hp -= attackPoints2
+    $("#enemyHP").text(chosenEnemy.hp)
+    $("#battleground").append("<p>" +chosenHero.name +" attacked "+ chosenEnemy.name + " for " + attackPoints2 +" hit points!</p>")
+    
+    if(chosenEnemy.hp <= 0){
+        $("#battleground").empty()
+        $("#battleground").append("<button class='btn btn-danger'>New Game</button>")
+    }
+    
+    // I cannot get the game to start over or move on to the next round
+    
+})
+
+
+var characterArr = [
+    {
+        name : "Bob",
+        hp : 50,
+        strength : 50,
+        image : "assets/images/bob.jpg"
+    },
+    {
+        name : "Linda",
+        hp : 50,
+        strength : 50,
+        image : "assets/images/linda.jpg"
+    },
+    {
+        name : "Louise",
+        hp : 50,
+        strength : 50,
+        image : "assets/images/louise.jpg"
+    },
+    {
+        name : "Gene",
+        hp : 50,
+        strength : 50,
+        image : "assets/images/gene.jpg"
+    },
+]
+
+initGame()
+})
+</script>    
 </body>
 </html>
